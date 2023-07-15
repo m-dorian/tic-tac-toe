@@ -1,8 +1,19 @@
 #include <iostream> 
-#include <string> 
-#include <vector> 
+#include <vector>  
+#include <cstdlib> 
+#include <time.h>
 
-using namespace std;  
+using namespace std;   
+/* Prints current board state. Example output:{ x _ o }
+                                            { _ o o }
+                                            { _ _ x } 
+*/ 
+int printBoard(char board[3][3]){ 
+    for(int i = 0; i < 3; i++){
+        cout << "{" << " "<< board[i][0]<< " " << board[i][1] << " " << board[i][2] << " " << "}" << endl;  
+    } 
+    return 0;
+} 
 
 int evaluateBoard(char board[3][3]){  
     //Check for player or computer victory on each row. 
@@ -37,55 +48,71 @@ int evaluateBoard(char board[3][3]){
             else if(board[0][2] == 'o')
                 return -10;  
         } 
-    //Return 0 if no one has won. 
+    //Return 0 if no one has won yet. 
     return 0;
 } 
 
-  vector<int> nextMove(char board[3][3]){ 
-    char originalBoard[3][3]; 
-    vector<int> winningMoves;
-        for(int i = 0; i < 3; i++){ 
-            for(int j = 0; j < 3; j++){ 
-                originalBoard[i][j] = board[i][j];
-            }
-        }
+void nextComputerMove(char board[3][3]){    
+    srand(time(0));
+    bool isMoveValid = false;
+    char workBoard[3][3];   
     for(int i = 0; i < 3; i++){ 
-        for( int j = 0; j < 3; j++){ 
-            if(board[i][j] == '_'){ 
-                board[i][j] = 'x'; 
-                if(evaluateBoard(board) == 10){
-                    winningMoves.push_back(i); 
-                    winningMoves.push_back(j); 
-                     
-                }
-                board[i][j] = 'o'; 
-                if(evaluateBoard(board) == -10){
-                    winningMoves.push_back(i); 
-                    winningMoves.push_back(j); 
-                    
-                 }
-} 
-             for(int i = 0; i < 3; i++){ 
             for(int j = 0; j < 3; j++){ 
-                board[i][j] = originalBoard[i][j];
+                workBoard[i][j] = board[i][j];
             }
         }
-} 
-} 
-    return winningMoves;
-}  
-
-
-/* Prints current board state. Example output:{ x _ o }
-                                            { _ o o }
-                                            { _ _ x } 
-*/ 
-int printBoard(char board[3][3]){ 
-    for(int i = 0; i < 3; i++){
-        cout << "{" << " "<< board[i][0]<< " " << board[i][1] << " " << board[i][2] << " " << "}" << endl;  
+    int row; 
+    int column; 
+    for(int i = 0; i < 3; i++){ 
+        for(int j = 0; j < 3; j++){ 
+            if(workBoard[i][j] == '_'){ 
+                workBoard[i][j] = 'o'; 
+                if(evaluateBoard(workBoard) == -10){ 
+                    row = i; 
+                    column = j;  
+                    goto end;
+                } 
+                 for(int i = 0; i < 3; i++){ 
+                    for(int j = 0; j < 3; j++){ 
+                workBoard[i][j] = board[i][j];
+            }
+        }
+            }
+        }
     } 
-    return 0;
-} 
+     for(int i = 0; i < 3; i++){ 
+        for(int j = 0; j < 3; j++){ 
+            if(workBoard[i][j] == '_'){ 
+                workBoard[i][j] = 'x'; 
+                if(evaluateBoard(workBoard) == 10){ 
+                    row = i; 
+                    column = j;  
+                    goto end; 
+                } 
+                 for(int i = 0; i < 3; i++){ 
+                    for(int j = 0; j < 3; j++){ 
+                workBoard[i][j] = board[i][j];
+            }
+        }
+            }
+        }
+    }  
+     
+    while( isMoveValid == false){ 
+        row = (rand() % (2 - 0 + 1)) + 0; 
+        column = (rand() % (2 - 0 + 1)) + 0;
+        if(board[row][column] == '_') 
+            isMoveValid = true; 
+    } 
+    if(isMoveValid == true) 
+        goto end; 
+            
+end: 
+board[row][column] = 'o'; 
+cout << "Computer move: " << endl; 
+printBoard(board);
+}
+
 
 //Request human player to input their next move's coordinates and calls printBoard() to print the updated board. 
 void nextPlayerMove(char board[3][3]){ 
@@ -100,14 +127,13 @@ int main(){
     int i = 0;
     char b[3][3] =
     {
-        { 'x', '_', 'o'},
-        { '_', 'o', 'o'},
-        { '_', '_', 'x'}
+        { '_', '_', '_'},
+        { '_', '_', '_'},
+        { '_', '_', '_'}
     };   
-    while(i <= 2){ 
-        nextPlayerMove(b); 
-        ++i;
-    }
+     while(i <= 2){ 
+        nextComputerMove(b);
+     }
     
     return 0;
 }
