@@ -3,7 +3,8 @@
 #include <cstdlib> 
 #include <time.h>
 
-using namespace std;   
+using namespace std;    
+
 /* Prints current board state. Example output:{ x _ o }
                                             { _ o o }
                                             { _ _ x } 
@@ -124,17 +125,27 @@ void nextPlayerMove(char board[3][3]){
     printBoard(board);    
 }
 int main(){  
-    int i = 0;
     char b[3][3] =
     {
         { '_', '_', '_'},
         { '_', '_', '_'},
         { '_', '_', '_'}
     };   
-     while(i <= 2){ 
-        nextComputerMove(b);
-     }
-    
+    srand(time(0)); 
+    int firstPlayer = (rand() % (1 - 0 + 1)) + 0; 
+
+    switch(firstPlayer){ 
+        case 1: while(evaluateBoard(b) != 10 && evaluateBoard(b) != -10){ 
+                nextPlayerMove(b); 
+                nextComputerMove(b); 
+        } 
+        break;
+        case 0: while(evaluateBoard(b) != 10 && evaluateBoard(b) != -10){ 
+            nextComputerMove(b); 
+            nextPlayerMove(b);
+        }   
+        break;
+    }
     return 0;
 }
 
