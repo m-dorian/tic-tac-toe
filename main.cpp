@@ -41,7 +41,7 @@ int evaluateBoard(char board[3][3]){
     return 0;
 } 
 
- /* vector<int> nextMove(char board[3][3]){ 
+  vector<int> nextMove(char board[3][3]){ 
     char originalBoard[3][3]; 
     vector<int> winningMoves;
         for(int i = 0; i < 3; i++){ 
@@ -74,9 +74,9 @@ int evaluateBoard(char board[3][3]){
 } 
     return winningMoves;
 }  
-*/
 
-/* Print current board state. Example output:{ x _ o }
+
+/* Prints current board state. Example output:{ x _ o }
                                             { _ o o }
                                             { _ _ x } 
 */ 
@@ -87,24 +87,27 @@ int printBoard(char board[3][3]){
     return 0;
 } 
 
-vector<int> nextPlayerMove(){ 
+//Request human player to input their next move's coordinates and calls printBoard() to print the updated board. 
+void nextPlayerMove(char board[3][3]){ 
     int row;
-    int column;  
-    vector <int> playerMoveCoordinates;    
+    int column; 
     cout << "Please type in your next move: "; 
     cin >> row >> column;   
-    playerMoveCoordinates.push_back(row);
-    playerMoveCoordinates.push_back(column); 
-    return playerMoveCoordinates;
+    board[row][column] = 'x'; 
+    printBoard(board);    
 }
-int main(){ 
+int main(){  
+    int i = 0;
     char b[3][3] =
     {
         { 'x', '_', 'o'},
         { '_', 'o', 'o'},
         { '_', '_', 'x'}
     };   
-   
+    while(i <= 2){ 
+        nextPlayerMove(b); 
+        ++i;
+    }
     
     return 0;
 }
