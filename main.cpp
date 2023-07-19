@@ -1,9 +1,11 @@
 #include <iostream> 
-#include <vector>  
-#include <cstdlib> 
-#include <time.h>
+#include <algorithm> 
 
-using namespace std;    
+using namespace std;   
+struct Move 
+{ 
+    int row, col;
+}; 
 
 /* Prints current board state. Example output:{ x _ o }
                                             { _ o o }
@@ -14,8 +16,18 @@ int printBoard(char board[3][3]){
         cout << "{" << " "<< board[i][0]<< " " << board[i][1] << " " << board[i][2] << " " << "}" << endl;  
     } 
     return 0;
-} 
+}  
+bool movesLeft(char board[3][3]){  
+    for(int i = 0; i < 3; i++){ 
+        for(int j = 0; j < 3; j++){ 
+            if(board[i][j] == '_'){ 
+                return true;
+            }
 
+        }
+    } 
+    return false; 
+} 
 int evaluateBoard(char board[3][3]){  
     //Check for player or computer victory on each row. 
     for(int i = 0; i < 3; i++){  
@@ -49,71 +61,74 @@ int evaluateBoard(char board[3][3]){
             else if(board[0][2] == 'o')
                 return -10;  
         } 
-    //Return 0 if no one has won yet. 
+    //Return 0 in case of tie.  
     return 0;
 } 
 
-void nextComputerMove(char board[3][3]){    
-    srand(time(0));
-    bool isMoveValid = false;
-    char workBoard[3][3];   
-    for(int i = 0; i < 3; i++){ 
-            for(int j = 0; j < 3; j++){ 
-                workBoard[i][j] = board[i][j];
+
+    
+int minimax(char board[3][3], int depth, bool isMaximizing) { 
+    int bestScore; 
+     int score = evaluateBoard(board); 
+     if(score == 10) 
+        return score; 
+    if(score == -10) 
+        return score; 
+    if(movesLeft(board) == false) 
+        return 0; 
+    
+    if (isMaximizing) {
+         bestScore = -1000;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == '_') {
+                    board[i][j] = 'x';
+                    int score = minimax(board, depth + 1, false);
+                    board[i][j] = '_';
+                    bestScore = max(bestScore, score);
+                }
             }
         }
-    int row; 
-    int column; 
-    for(int i = 0; i < 3; i++){ 
-        for(int j = 0; j < 3; j++){ 
-            if(workBoard[i][j] == '_'){ 
-                workBoard[i][j] = 'o'; 
-                if(evaluateBoard(workBoard) == -10){ 
-                    row = i; 
-                    column = j;  
-                    goto end;
-                } 
-                 for(int i = 0; i < 3; i++){ 
-                    for(int j = 0; j < 3; j++){ 
-                workBoard[i][j] = board[i][j];
+        return bestScore - depth;
+    } else {
+         bestScore = 1000;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == '_') {
+                    board[i][j] = 'o';
+                    int score = minimax(board, depth + 1, true); 
+                    board[i][j] = '_';
+                    bestScore = min(bestScore, score); 
+                }
             }
         }
-            }
-        }
-    } 
-     for(int i = 0; i < 3; i++){ 
-        for(int j = 0; j < 3; j++){ 
-            if(workBoard[i][j] == '_'){ 
-                workBoard[i][j] = 'x'; 
-                if(evaluateBoard(workBoard) == 10){ 
-                    row = i; 
-                    column = j;  
-                    goto end; 
-                } 
-                 for(int i = 0; i < 3; i++){ 
-                    for(int j = 0; j < 3; j++){ 
-                workBoard[i][j] = board[i][j];
-            }
-        }
-            }
-        }
-    }  
-     
-    while( isMoveValid == false){ 
-        row = (rand() % (2 - 0 + 1)) + 0; 
-        column = (rand() % (2 - 0 + 1)) + 0;
-        if(board[row][column] == '_') 
-            isMoveValid = true; 
-    } 
-    if(isMoveValid == true) 
-        goto end; 
-            
-end: 
-board[row][column] = 'o'; 
-cout << "Computer move: " << endl; 
-printBoard(board);
+        return bestScore + depth;
+    }
 }
 
+void nextMinimaxMove(char board[3][3]) {
+    int bestScore = -1000;
+    int bestRow = -1;
+    int bestColumn = -1;
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (board[i][j] == '_') {
+                board[i][j] = 'x';  
+                int score = minimax(board, 0, false);
+                board[i][j] = '_';
+
+                if (score > bestScore) {
+                    bestRow = i; 
+                    bestColumn = j; 
+                    bestScore = score;
+                }
+            }
+        }
+    }
+    board[bestRow][bestColumn] = 'x'; 
+    printBoard(board);
+}
 
 //Request human player to input their next move's coordinates and calls printBoard() to print the updated board. 
 void nextPlayerMove(char board[3][3]){ 
@@ -121,31 +136,18 @@ void nextPlayerMove(char board[3][3]){
     int column; 
     cout << "Please type in your next move: "; 
     cin >> row >> column;   
-    board[row][column] = 'x'; 
+    board[row][column] = 'o'; 
     printBoard(board);    
 }
-int main(){  
-    char b[3][3] =
-    {
-        { '_', '_', '_'},
-        { '_', '_', '_'},
+int main(){   
+    char board[3][3] =
+    { 
+        { 'o', '_', '_'},
+        { 'o', '_', '_'},
         { '_', '_', '_'}
-    };   
-    srand(time(0)); 
-    int firstPlayer = (rand() % (1 - 0 + 1)) + 0; 
+    };     
+    nextMinimaxMove(board);
 
-    switch(firstPlayer){ 
-        case 1: while(evaluateBoard(b) != 10 && evaluateBoard(b) != -10){ 
-                nextPlayerMove(b); 
-                nextComputerMove(b); 
-        } 
-        break;
-        case 0: while(evaluateBoard(b) != 10 && evaluateBoard(b) != -10){ 
-            nextComputerMove(b); 
-            nextPlayerMove(b);
-        }   
-        break;
-    }
     return 0;
 }
 
