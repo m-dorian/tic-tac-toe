@@ -142,12 +142,29 @@ void nextPlayerMove(char board[3][3]){
 int main(){   
     char board[3][3] =
     { 
-        { 'o', '_', '_'},
-        { 'o', '_', '_'},
+        { '_', '_', '_'},
+        { '_', '_', '_'},
         { '_', '_', '_'}
     };     
-    nextMinimaxMove(board);
-
+    for(int i = 0; i < 9; i++){ 
+        nextMinimaxMove(board); 
+        if(evaluateBoard(board) != 0 || movesLeft(board) == false) 
+            break;
+        nextPlayerMove(board); 
+            if(evaluateBoard(board) != 0 || movesLeft(board) == false) 
+                break; 
+    } 
+    switch(evaluateBoard(board)){ 
+        case 10: 
+            cout << "Computer wins!"; 
+            break; 
+        case -10: 
+            cout << "You win!"; 
+            break; 
+        case 0: 
+            cout << "It's a tie!"; 
+            break; 
+    }
     return 0;
 }
 
