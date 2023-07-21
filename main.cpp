@@ -1,11 +1,7 @@
-#include <iostream> 
-#include <algorithm> 
+#include <iostream>  
 
 using namespace std;   
-struct Move 
-{ 
-    int row, col;
-}; 
+
 
 /* Prints current board state. Example output:{ x _ o }
                                             { _ o o }
@@ -13,8 +9,10 @@ struct Move
 */ 
 int printBoard(char board[3][3]){ 
     for(int i = 0; i < 3; i++){
-        cout << "{" << " "<< board[i][0]<< " " << board[i][1] << " " << board[i][2] << " " << "}" << endl;  
+        cout << "{" << " "<< board[i][0]<< " " << board[i][1] << " " << board[i][2] << " " << "}" << endl;
+          
     } 
+    cout << endl;
     return 0;
 }  
 bool movesLeft(char board[3][3]){  
@@ -127,6 +125,7 @@ void nextMinimaxMove(char board[3][3]) {
         }
     }
     board[bestRow][bestColumn] = 'x'; 
+    cout << "Computer move: " << endl;
     printBoard(board);
 }
 
@@ -136,7 +135,8 @@ void nextPlayerMove(char board[3][3]){
     int column; 
     cout << "Please type in your next move: "; 
     cin >> row >> column;   
-    board[row][column] = 'o'; 
+    board[row][column] = 'o';  
+    cout << "Your move: " << endl; 
     printBoard(board);    
 }
 int main(){   
