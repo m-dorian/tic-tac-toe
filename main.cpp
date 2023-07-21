@@ -131,13 +131,45 @@ void nextMinimaxMove(char board[3][3]) {
 
 //Request human player to input their next move's coordinates and calls printBoard() to print the updated board. 
 void nextPlayerMove(char board[3][3]){ 
-    int row;
-    int column; 
+    string move1; 
     cout << "Please type in your next move: "; 
-    cin >> row >> column;   
-    board[row][column] = 'o';  
+    cin >> move1;   
+    int move2 = stoi(move1);
+    switch(move2){ 
+        case 1: 
+            board[0][0] = 'o'; 
+            break; 
+        case 2: 
+            board[0][1] = 'o'; 
+            break; 
+        case 3: 
+            board[0][2] = 'o'; 
+            break;  
+        case 4: 
+            board[1][0] = 'o'; 
+            break;  
+        case 5: 
+            board[1][1] = 'o'; 
+            break;  
+        case 6: 
+            board[1][2] = 'o'; 
+            break;  
+        case 7: 
+            board[2][0] = 'o'; 
+            break;  
+        case 8: 
+            board[2][1] = 'o'; 
+            break;  
+        case 9: 
+            board[2][2] = 'o'; 
+            break;   
+        default: 
+        cout << "Invalid\n";
+        nextPlayerMove(board);
+        break;
+    } 
     cout << "Your move: " << endl; 
-    printBoard(board);    
+    printBoard(board);     
 }
 int main(){   
     char board[3][3] =
@@ -145,13 +177,21 @@ int main(){
         { '_', '_', '_'},
         { '_', '_', '_'},
         { '_', '_', '_'}
-    };     
+    }; 
+    char exampleBoard[3][3] =
+    { 
+        { '1', '2', '3'},
+        { '4', '5', '6'},
+        { '7', '8', '9'}
+    }; 
+    cout << "Welcome to tic-tac-toe. To play the game, please type in the number which coressponds to the square in which you wish to make your next move." << endl; 
+    printBoard(exampleBoard); 
     for(int i = 0; i < 9; i++){ 
         nextMinimaxMove(board); 
         if(evaluateBoard(board) != 0 || movesLeft(board) == false) 
             break;
-        nextPlayerMove(board); 
-            if(evaluateBoard(board) != 0 || movesLeft(board) == false) 
+        nextPlayerMove(board);  
+        if(evaluateBoard(board) != 0 || movesLeft(board) == false) 
                 break; 
     } 
     switch(evaluateBoard(board)){ 
